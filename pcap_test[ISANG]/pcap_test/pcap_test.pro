@@ -4,3 +4,6 @@ CONFIG -= app_bundle
 CONFIG -= qt
 LIBS += -lpcap
 SOURCES += main.cpp
+
+HEADERS += \
+    packet_structure.h

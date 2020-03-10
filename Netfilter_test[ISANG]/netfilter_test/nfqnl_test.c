@@ -18,6 +18,7 @@ char * buffer;
 static uint32_t print_pkt (struct nfq_data *tb)
 {
 	int id = 0;
+    verdiction=NF_ACCEPT;
 	struct nfqnl_msg_packet_hdr *ph;
 	struct nfqnl_msg_packet_hw *hwph;
 	uint32_t mark, ifi, uid, gid;
@@ -77,13 +78,13 @@ static uint32_t print_pkt (struct nfq_data *tb)
     if(ip->Protocol==0x06)
     {
         printf("TCP protocol\n");
-        tcpheader * tcp = (tcpheader*) data+((int)(ip->hlen)*4);
+        tcpheader * tcp = (tcpheader*)(data+((int)(ip->hlen)*4));
         printf("%d %d %x\n",ntohs(ip->Totlen),ip->hlen,(tcp->hlenFlag));
-        if(ntohs(ip->Totlen)-ip->hlen*4-((ntohs(tcp->hlenFlag)>>12)&0xf)!=0)
+        if(ntohs(ip->Totlen)-ip->hlen*4-((ntohs(tcp->hlenFlag)>>12)&0xf)*4!=0)
         {
             printf("TCP payload\n");
-            int headerlength = ntohs(ip->Totlen)-ip->hlen*4-((ntohs(tcp->hlenFlag)>>12)&0xf)*4;
-            printf("headerlength : %u",headerlength);
+            int headerlength = ip->hlen*4+((ntohs(tcp->hlenFlag)>>12)&0xf)*4;
+            printf("headerlength : %u\n",headerlength);
             unsigned char* pl=data+headerlength;
             if(pl[0]==0x47 && pl[1]==0x45 && pl[2]==0x54)
             {
@@ -92,7 +93,6 @@ static uint32_t print_pkt (struct nfq_data *tb)
                 {
                     verdiction=NF_DROP;
                 }
-                printf("%d",strstr(pl,buffer));
             }
         }
     }

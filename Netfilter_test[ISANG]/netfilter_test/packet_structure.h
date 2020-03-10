@@ -3,12 +3,12 @@
 #include <pcap.h>
 
 #pragma pack(push, 1)
-struct ethheader{
+typedef struct ethheader{
     uint8_t Dhost[6];
     uint8_t Shost[6];
     uint16_t Nlayer;
-};
-struct ipheader{
+}ethheader;
+typedef struct ipheader{
     uint8_t hlen:4, ver:4;
     uint8_t DSF;
     uint16_t Totlen;
@@ -19,8 +19,8 @@ struct ipheader{
     uint16_t checksum;
     uint8_t Sip[4];
     uint8_t Dip[4];
-};
-struct tcpheader{
+}ipheader;
+typedef struct tcpheader{
     uint16_t Sport;
     uint16_t Dport;
     uint32_t Seqnum;
@@ -29,7 +29,10 @@ struct tcpheader{
     uint16_t Size;
     uint16_t checksum;
     uint16_t Urgpointer;
-};
+}tcpheader;
+typedef struct application{
+    uint8_t value[16];
+}application;
 #pragma pack(pop)
 
 
